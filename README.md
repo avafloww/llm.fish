@@ -41,8 +41,8 @@ llm --yolo show disk usage
 ## Defaults
 
 ```bash
-llm --set-default model haiku
-llm --set-default yolo on
+llm --set-default model sonnet  # default
+llm --set-default yolo off      # default
 ```
 
 Stored as Fish universal variables.
