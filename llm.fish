@@ -139,9 +139,9 @@ whoami
     # Execute claude and capture output
     set -l result
     if test "$yolo_mode" = "on"
-        set result (claude --print --model $model --system-prompt $system_prompt --dangerously-skip-permissions $prompt 2>&1)
+        set result (claude --print --model $model --system-prompt $system_prompt --no-session-persistence --dangerously-skip-permissions $prompt 2>&1)
     else
-        set result (claude --print --model $model --system-prompt $system_prompt $prompt 2>&1)
+        set result (claude --print --model $model --system-prompt $system_prompt --no-session-persistence $prompt 2>&1)
     end
     set -l claude_status $status
 
@@ -258,7 +258,7 @@ Based on the refinement, output the updated command."
                 echo "  Thinking..."
                 set_color normal
 
-                set -l new_result (claude --print --model $model --system-prompt $system_prompt $refine_prompt 2>&1)
+                set -l new_result (claude --print --model $model --system-prompt $system_prompt --no-session-persistence $refine_prompt 2>&1)
                 set -l claude_status $status
 
                 if test $claude_status -ne 0
