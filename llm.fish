@@ -217,8 +217,15 @@ START YOUR RESPONSE WITH THE COMMAND ITSELF. No preamble, no introduction, just 
 
     # Print the command that will be/would be executed
     if test "$yolo_mode" = "on"
-        # In yolo mode, comments are just printed (not executed)
-        if string match -qr "^#" "$result[1]"
+        # In yolo mode, if ALL lines are comments, just print them (no command to execute)
+        set -l has_command false
+        for line in $result
+            if not string match -qr '^#|^$' -- "$line"
+                set has_command true
+                break
+            end
+        end
+        if test "$has_command" = "false"
             if test "$verbose_mode" = "on"
                 printf '\e[90m# model: %s, time: %ss\e[m\n\n' $model $elapsed_time >&2
             end
@@ -238,7 +245,8 @@ START YOUR RESPONSE WITH THE COMMAND ITSELF. No preamble, no introduction, just 
             end
         end
         # Execute the command
-        fish -c (string join \n -- $result)
+        # Use string collect to prevent fish from splitting on newlines
+        fish -c (string join \n -- $result | string collect)
     else if not status is-interactive; or not isatty stdin
         # Non-interactive: just print the command
         if test "$verbose_mode" = "on"
@@ -336,7 +344,8 @@ function _llm_interactive_menu --description "Interactive menu for llm command c
                 set -l tmpfile (mktemp)
 
                 # Join result list into a single command string
-                set -l cmd_string (string join \n -- $result)
+                # Use string collect to prevent fish from splitting on newlines
+                set -l cmd_string (string join \n -- $result | string collect)
 
                 if test "$os_type" = "Darwin"
                     # macOS: script -q <outfile> <command...>
