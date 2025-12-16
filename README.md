@@ -27,7 +27,10 @@ llm --yolo show disk usage
 - `--model <model>` — Use `sonnet`, `opus`, or `haiku`
 - `--yolo` — Execute immediately, no confirmation
 - `--no-yolo` — Just print the command
-- `--set-default <key> <value>` — Persist settings (`model`, `yolo`)
+- `--fix` — Offer to fix failed commands (default: on)
+- `--no-fix` — Don't offer to fix failed commands
+- `--verbose`, `-v` — Show model and execution time
+- `--set-default <key> <value>` — Persist settings (`model`, `yolo`, `fix`)
 - `--help` — Show help
 
 ## Modes
@@ -43,6 +46,7 @@ llm --yolo show disk usage
 ```bash
 llm --set-default model sonnet  # default
 llm --set-default yolo off      # default
+llm --set-default fix on        # default
 ```
 
 Stored as Fish universal variables.
