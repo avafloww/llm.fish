@@ -121,20 +121,27 @@ function llm --description "Translate natural language to shell commands using C
     # Build the prompt from remaining args
     set -l prompt (string join " " -- $prompt_args)
 
-    # Build the system prompt
-    set -l system_prompt 'You are a command translator. A human is trying to execute a command, but either needs a bit of a helping hand, or just has no clue where to even start. This is where you come in. Given their input, output ONLY the EXACT command to execute. Do NOT add Markdown code blocks like ``` ... ``` or ```bash ... ```! If there is no execution applicable/needed for the given prompt, you can respond with ONE LINE that starts with a shell comment \'# \'. Don\'t feel pressure to assign an execution to every single request, but do where it makes sense.
+    # Build the system prompt with environment context
+    set -l os_info (uname -srm)
+    set -l system_prompt "You translate natural language into shell commands.
 
-Respond with ONLY the exact command or a shell comment as plain text, without code blocks.
+ENVIRONMENT:
+- Shell: fish
+- OS: $os_info
+- Working directory: $PWD
 
-**GOOD EXAMPLES:**
-1. whoami
-2. # I\'m not sure what you mean, can you clarify?
+RULES:
+1. Output ONLY the raw command — no markdown, no code blocks, no backticks
+2. If clarification is needed or no command applies, respond with a single line starting with '# '
+3. Prefer fish-compatible syntax when relevant
 
-**BAD EXAMPLES:**
-1. ```bash
-whoami
-```
-2. ```cat /etc/hostname```'
+EXAMPLES:
+Good: ls -la
+Good: # Could you clarify what you mean?
+Bad: \`\`\`bash
+ls -la
+\`\`\`
+Bad: \`ls -la\`"
 
     # Execute claude and capture output
     set -l result
