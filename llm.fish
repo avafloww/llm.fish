@@ -123,12 +123,18 @@ function llm --description "Translate natural language to shell commands using C
 
     # Build the system prompt with environment context
     set -l os_info (uname -srm)
+    set -l user_info (id -un)
+    set -l group_info (id -gn)
+    set -l is_root (test (id -u) -eq 0; and echo "yes (no sudo needed)"; or echo "no (use sudo for privileged commands)")
     set -l system_prompt "You translate natural language into shell commands.
 
 ENVIRONMENT:
 - Shell: fish
 - OS: $os_info
+- User: $user_info (group: $group_info)
+- Home: $HOME
 - Working directory: $PWD
+- Root: $is_root
 
 RULES:
 1. Output ONLY the raw command — no markdown, no code blocks, no backticks
